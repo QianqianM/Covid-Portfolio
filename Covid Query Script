@@ -10,22 +10,12 @@ SELECT location, date, total_cases, new_cases, total_deaths, population
 FROM covid-portfolio-project-372319.COVID.Death
 ORDER BY 1,2;
 
---Looking at total cases VS total deaths
-SELECT location, date, total_cases, total_deaths, total_deaths/total_cases*100 AS DeathPercentage
-FROM covid-portfolio-project-372319.COVID.Death
-ORDER BY 1,2;
-
---Looking at Ireland
+--Looking at total cases VS total deaths in Ireland
+--Shows likelihood of dying if you have covid in Ireland 
 SELECT location, date, total_cases, total_deaths, total_deaths/total_cases*100 AS DeathPercentage
 FROM covid-portfolio-project-372319.COVID.Death
 WHERE location LIKE 'Ireland'
 ORDER BY 1,2;
-
---Looking at the highest DeathPercentage in Ireland 
-SELECT location, date, total_cases, total_deaths, total_deaths/total_cases*100 AS DeathPercentage
-FROM covid-portfolio-project-372319.COVID.Death
-WHERE location LIKE 'Ireland'
-ORDER BY DeathPercentage DESC;
 
 --Looking at China
 SELECT location, date, total_cases, total_deaths, total_deaths/total_cases*100 AS DeathPercentage
@@ -33,43 +23,50 @@ FROM covid-portfolio-project-372319.COVID.Death
 WHERE location='China'
 ORDER BY DeathPercentage DESC;
 
---Looking at the total cases vs population in Ireland 
---Shows what % population got covid
+--Shows likelihood of getting coivd in Ireland
 SELECT location, date, total_cases, population, total_cases/population*100 AS InfectionRate
 FROM covid-portfolio-project-372319.COVID.Death
 WHERE location LIKE 'Ireland'
-ORDER BY 1,2;
+ORDER BY 2;
+
+--Showing the total death count of each country
+SELECT location, population, MAX(total_deaths) AS TotalDeathCount
+FROM covid-portfolio-project-372319.COVID.Death
+GROUP BY location, population
+ORDER BY TotalDeathCount DESC;
+--in the location area, there is World,Africa...they are grouping more than one continent
+SELECT continent, location, population
+FROM covid-portfolio-project-372319.COVID.Death;
+--When continent is NULL, that's where location column went wrong
+
+--Showing countries with Highest Death Count
+SELECT location, MAX(total_deaths) AS TotalDeathCount
+FROM covid-portfolio-project-372319.COVID.Death
+WHERE continent IS NOT NULL
+GROUP BY location
+ORDER BY TotalDeathCount DESC;
+
+--Showing Continents with Highest Death Count
+SELECT continent, MAX(total_deaths) AS TotalDeathCount
+FROM covid-portfolio-project-372319.COVID.Death
+WHERE continent IS NOT NULL
+GROUP BY continent
+ORDER BY TotalDeathCount DESC;
+
+--Showing countries with highest death Rate compared to population 
+SELECT location, MAX(total_deaths) AS TotalDeathCount, MAX(total_deaths/population*100) AS HigestDeathRate
+FROM covid-portfolio-project-372319.COVID.Death
+WHERE continent IS NOT NULL
+GROUP BY location, population
+ORDER BY HigestDeathRate DESC;
 
 --Countries with higest infection rate compared to population 
 SELECT location, population, MAX(total_cases) AS HighestInfectionCount, MAX(total_cases)/population*100 AS PercentagePopulationInfected
 FROM covid-portfolio-project-372319.COVID.Death
+WHERE continent IS NOT NULL
 GROUP BY location, population
 ORDER BY PercentagePopulationInfected DESC;
 --Tableau table 3
-
---Showing countries with highest death Rate 
-SELECT location, population, MAX(total_deaths) AS HighestDeathCount, MAX(total_deaths/population*100) AS HigestDeathRate
-FROM covid-portfolio-project-372319.COVID.Death
-GROUP BY location, population
-ORDER BY HigestDeathRate DESC;
-
---What are the different countries in Europe 
-SELECT DISTINCT (location), continent, population
-FROM covid-portfolio-project-372319.COVID.Death
-WHERE continent='Europe'
-ORDER BY location;
-
---Is there any null in continent
-SELECT *
-FROM covid-portfolio-project-372319.COVID.Death
-WHERE continent IS NULL;
-
---Showing Continents with Highest Death Count
-SELECT continent, Max(total_deaths) AS MaxTotalDeath
-FROM covid-portfolio-project-372319.COVID.Death
-WHERE continent IS NOT NULL
-GROUP BY continent
-ORDER BY MaxTotalDeath DESC;
 
 --Global Death Percentage
 --Tableau Table 1
@@ -100,7 +97,7 @@ FROM covid-portfolio-project-372319.COVID.Vaccination vac
 JOIN covid-portfolio-project-372319.COVID.Death dea
 ON vac.date=dea.date AND vac.location=dea.location
 WHERE dea.continent IS NOT NULL
-ORDER BY 2,3;
+ORDER BY 1,2,3;
 
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(vac.new_vaccinations) OVER (Partition by dea.location ORDER BY dea.location, dea.date ) AS RollingPeopleVaccinated
 FROM covid-portfolio-project-372319.COVID.Vaccination vac
