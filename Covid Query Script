@@ -78,6 +78,7 @@ GROUP BY location
 ORDER BY TotalDeaths DESC;
 
 --Count people fullly vaccinanted in each country
+--Tableau viz 4
 SELECT continent, location,population, MAX(people_fully_vaccinated) AS Total_Vaccinnated
 FROM covid-portfolio-project-372319.COVID.Death
 WHERE continent IS  NOT NULL
