@@ -114,3 +114,4 @@ SELECT *, RollingPeopleVaccinated/population*100 AS PercenPopulationVaccinated
 FROM PopVsVac
 
 --THE END
+
