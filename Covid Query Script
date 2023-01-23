@@ -46,7 +46,7 @@ GROUP BY location, population
 ORDER BY HigestDeathRate DESC;
 
 --Countries with higest infection rate compared to population
---Tableau viz 3 
+--Tableau viz 4 
 SELECT location, population, MAX(total_cases) AS HighestInfectionCount, MAX(total_cases)/population*100 AS PercentagePopulationInfected
 FROM covid-portfolio-project-372319.COVID.Death
 WHERE continent IS NOT NULL
@@ -78,7 +78,7 @@ GROUP BY location
 ORDER BY TotalDeaths DESC;
 
 --Count people fullly vaccinanted in each country
---Tableau viz 4
+--Tableau viz 3
 SELECT continent, location,population, MAX(people_fully_vaccinated) AS Total_Vaccinnated
 FROM covid-portfolio-project-372319.COVID.Death
 WHERE continent IS  NOT NULL
